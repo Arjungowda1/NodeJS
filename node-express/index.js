@@ -3,17 +3,21 @@ const http = require('http');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const dishRouter = require('./routes/dishRouter');
+const promotionRouter = require('./routes/promotionRouter');
+const leaderRouter = require('./routes/leaderRouter');
 
 const hostName = "localhost";
 const port = 3000;
 
 const app = express();
 
+app.use('/dishes',dishRouter);
+app.use('/promotions',promotionRouter);
+app.use('/leaders',leaderRouter);
+
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 // parsed data is added to req.body
-
-app.use('/dishes',dishRouter);
 
 app.use(express.static(__dirname+ '/public'));
 
