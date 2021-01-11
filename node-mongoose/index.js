@@ -8,27 +8,40 @@ const connect = mongoose.connect(url, {useNewUrlParser: true, useUnifiedTopology
 connect.then((db) =>{
     console.log("connected to the database");
     
-    var newDish = Dishes({
+    Dishes.create({
         name: "Vadonut",
-        description: "Lorem ipsum dolor"
-    });
+        description: "Lorem ipsum dolor",
+    })
+    .then((dish) => {
+        console.log(dish)
 
-    newDish.save()
-        .then((dish) =>{
-            console.log(dish)
+        return Dishes.findByIdAndUpdate(dish._id, {
+            $set: { description: 'Updated test'}
+        },{
+            new: true
+            // returns the dish
+        }).exec();
+    })
+    .then((dishes) => {
+        console.log(dishes);
 
-            return Dishes.find({}).exec();
-        })
-        .then((dishes) =>{
-            console.log(dishes);
-
-            return Dishes.remove({});
-        })
-        .then(() =>{
-            console.log("Empty")
-            return mongoose.connection.close();
-        })
-        .catch((err) => {
-           console.log(err);
+        dishes.comments.push({
+            rating: 5,
+            comment: "Lorem ipsum dipsum",
+            author: "Mr. Pool"
         });
+
+        return dishes.save();
+    })
+    .then((dish) =>{
+        console.log(dish);
+        return Dishes.remove({});
+    })
+    .then(() => {
+        console.log("Empty")
+        return mongoose.connection.close();
+    })
+    .catch((err) => {
+        console.log(err);
+    });
 });
